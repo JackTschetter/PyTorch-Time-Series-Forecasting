@@ -32,7 +32,7 @@ This repository contains code to implement various machine learning algorithms f
 
 ---
 
-## Features
+## Algorithms Studied
 
 - Long Short Term Memory (LSTM)
 - Prophet/Multi-Prophet (Meta)
