@@ -21,7 +21,7 @@
 
 ## About the Project
 
-Describe your project briefly:
+This repository contains code to implement various machine learning algorithms for time series forecasting at scale. Various algorithms were implemented in our Python code frame, and compared. 
 
 - What is this project about?
 - Why did you create it?
@@ -34,9 +34,12 @@ Describe your project briefly:
 
 ## Features
 
-- Feature 1
-- Feature 2
-- Feature 3
+- Long Short Term Memory (LSTM)
+- Prophet/Multi-Prophet (Meta)
+- Temporal Convolutional Neural Network (TCN)
+- Long Short Term Temporal Patterns (LSTNet)
+- Informer Based Model
+- Univariate Divide and Conquer Long Short Term Memory (UnivarDIVIDE)
 
 ---
 
