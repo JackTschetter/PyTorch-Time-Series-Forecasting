@@ -6,7 +6,7 @@
 ## Table of Contents
 
 - [About the Project](#about-the-project)
-- [Features](#features)
+- [Algorithms Studied](#algorithms-studied)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
