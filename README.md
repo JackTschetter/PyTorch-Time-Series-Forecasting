@@ -68,4 +68,9 @@ This repository contains code to implement various machine learning algorithms f
    ```bash
    git clone https://github.com/your-username/project-name.git
    cd project-name
+
+## Usage
+
+## Model Evaluation
+
 ## Contact
