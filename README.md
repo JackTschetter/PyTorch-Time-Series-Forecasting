@@ -7,7 +7,7 @@
 
 - [About the Project](#about-the-project)
 - [Algorithms Studied](#algorithms-studied)
-- [Tech Stack](#tech-stack)
+- [Tools Used](#tools-used)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -44,7 +44,7 @@ This repository contains code to implement various machine learning algorithms f
 
 ---
 
-## Tech Stack
+## Tools Used
 
 - **Frontend**: React, TypeScript
 - **Backend**: Node.js, Express.js
