@@ -12,6 +12,7 @@
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [Usage](#usage)
+- [Model Evaluation] (#model-evaluation)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
