@@ -50,11 +50,13 @@ This repository contains code to implement various machine learning algorithms f
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/project-name.git
-   cd project-name
+   git clone https://github.com/JackTschetter/Predictions
+   cd Predictions
 
 ## Usage
 
 ## Results and Model Evaluation
 
 ## Contact
+
+Contact me anytime! Day or night! My email is jackrtschetter@gmail.com and my phone number is 612-380-1832. Sending me a brief text introducing yourself is the best way to reach me. I will respond ASAP.
