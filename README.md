@@ -24,16 +24,9 @@
 
 This repository contains code to implement various machine learning algorithms for time series forecasting at scale. Various algorithms were implemented in our Python code frame, and compared. 
 
-- What is this project about?
-- Why did you create it?
-- What problems does it solve?
-- Include a screenshot or demo (if applicable). Example:
-
-![Project Screenshot](./assets/screenshot.png)
-
 ---
 
-## Algorithms Studied
+## Models Studied
 
 - Long Short Term Memory (LSTM)
 - Prophet/Multi-Prophet (Meta)
@@ -62,6 +55,6 @@ This repository contains code to implement various machine learning algorithms f
 
 ## Usage
 
-## Results and Evaluation
+## Results and Model Evaluation
 
 ## Contact
