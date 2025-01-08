@@ -46,20 +46,11 @@ This repository contains code to implement various machine learning algorithms f
 
 ## Tools Used
 
-- **Frontend**: React, TypeScript
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB
-- **Other Tools**: Docker, Webpack
-
 ---
 
 ## Getting Started
 
 ### Prerequisites
-
-- Install [Node.js](https://nodejs.org/)
-- Install [Git](https://git-scm.com/)
-- (Optional) Install Docker if needed: [Docker Installation Guide](https://www.docker.com/)
 
 ### Installation
 
