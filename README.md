@@ -6,6 +6,7 @@
 ## Table of Contents
 
 - [About the Project](#about-the-project)
+  - [Background on Time Series Forecasting](#background-on-time-series-forecasting)
 - [Algorithms Studied](#algorithms-studied)
 - [Tools Used](#tools-used)
 - [Getting Started](#getting-started)
