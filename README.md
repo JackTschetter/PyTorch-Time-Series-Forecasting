@@ -25,6 +25,8 @@
 
 This repository contains code to implement various machine learning algorithms for time series forecasting at scale. Various algorithms were implemented in our Python code frame, and compared. 
 
+### Background on Time Series Forecasting
+
 ---
 
 ## Models Studied
