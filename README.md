@@ -13,6 +13,8 @@
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [Results and Evaluation](#results-and-evaluation)
+  - [Evaluating the Models](#evaluating-the-models)
+  - [Results](#results)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -59,6 +61,10 @@ This repository contains code to implement various machine learning algorithms f
 ## Usage
 
 ## Results and Model Evaluation
+
+### Evaluating the Models
+
+### Results
 
 ## Contact
 
