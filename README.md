@@ -60,11 +60,17 @@ This repository contains code to implement various machine learning algorithms f
 
 ## Usage
 
+---
+
 ## Results and Model Evaluation
+
+---
 
 ### Evaluating the Models
 
 ### Results
+
+---
 
 ## Contact
 
