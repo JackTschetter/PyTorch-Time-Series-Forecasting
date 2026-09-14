@@ -70,8 +70,4 @@ This repository contains code to implement various machine learning algorithms f
 
 ### Results
 
----
-
-## Contact
-
-Contact me anytime! Day or night! My email is jackrtschetter@gmail.com and my phone number is 612-380-1832. Sending me a brief text introducing yourself is the best way to reach me. I will respond ASAP.
+---l respond ASAP.
