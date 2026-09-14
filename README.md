@@ -69,5 +69,3 @@ This repository contains code to implement various machine learning algorithms f
 ### Evaluating the Models
 
 ### Results
-
----l respond ASAP.
