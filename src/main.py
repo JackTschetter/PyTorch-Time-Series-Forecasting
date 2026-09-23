@@ -6,13 +6,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
-# from prophet import Prophet
-from model_MultiProphet import MultiProphet
 
 from model_LSTM import LSTM, LE_LSTM, LSTNet, LE_LSTNet
 from model_TCN import TCN, LE_TCN
+from model_INFORMER import Informer
 
-from wrapper_Prophet import myProphet
 from wrapper_LSTM import myLSTM
 from wrapper_DIVIDE import myDIVIDE, GE_MLP
 from wrapper_UnivarDIVIDE import myUnivarDIVIDE
@@ -33,7 +31,8 @@ parser = argparse.ArgumentParser(description='PyTorch Time series forecasting')
 parser.add_argument('--data',           type=str,   default='wiki_small',     help='location of the data file', choices=["wiki_small"])
 parser.add_argument('--model',          type=str,   default='LSTM',          help='model name',                choices=["Prophet",
                                                                                                                           "LSTM", "TCN", "LSTNet",
-                                                                                                                          "UnivarDIVIDE", "DIVIDE"])
+                                                                                                                          "UnivarDIVIDE", "DIVIDE",
+                                                                                                                          "Informer", "INFORMER"])
 # Environment setting
 parser.add_argument('--gpu_id',         type=int,   default=2,                  help='GPU id')
 parser.add_argument('--ck_path',        type=str,   default='./checkpoint_',    help='path to save the final model')  # './checkpoint_'
@@ -60,6 +59,17 @@ parser.add_argument('--dropout',        type=float, default=0.2,                
 parser.add_argument('--skip',           type=float, default=6)
 parser.add_argument('--hidSkip',        type=int,   default=5)
 parser.add_argument('--local_emb_dim',  type=int,   default=64)
+# Informer setting
+parser.add_argument('--label_len',      type=int,   default=18,                 help='Informer decoder context length')
+parser.add_argument('--factor',         type=int,   default=5,                  help='Informer ProbSparse attention factor')
+parser.add_argument('--d_model',        type=int,   default=64,                 help='Informer hidden dimension')
+parser.add_argument('--n_heads',        type=int,   default=4,                  help='Informer number of attention heads')
+parser.add_argument('--e_layers',       type=int,   default=2,                  help='Informer encoder layers')
+parser.add_argument('--d_layers',       type=int,   default=1,                  help='Informer decoder layers')
+parser.add_argument('--d_ff',           type=int,   default=128,                help='Informer feed-forward dimension')
+parser.add_argument('--attn',           type=str,   default='prob',             help='Informer attention type', choices=['prob', 'full'])
+parser.add_argument('--embed',          type=str,   default='fixed',            help='Informer time embedding type', choices=['fixed'])
+parser.add_argument('--freq',           type=str,   default='h',                help='Informer timestamp frequency', choices=['h'])
 args = parser.parse_args()
 
 
@@ -128,6 +138,9 @@ args.data_dim = Data.m
 # Model
 ##########################################################
 if args.model == "Prophet":
+    from model_MultiProphet import MultiProphet
+    from wrapper_Prophet import myProphet
+
     FLAG_CROSS_VALID = True
 
     # Model
@@ -207,9 +220,44 @@ elif args.model == "DIVIDE":
     # Wrap up
     myModel = myDIVIDE(args, models, optims, criterion, evaluateL1, evaluateL2)
 
-elif args.model == "INFORMER":
-    myModel = myInformer() #What are the args, and where are they stored?
-    print("Line 213")
+elif args.model in ["Informer", "INFORMER"]:
+    if args.label_len > args.hist_window:
+        raise ValueError("--label_len must be less than or equal to --hist_window for Informer.")
+
+    model = Informer(
+        enc_in=args.data_dim,
+        dec_in=args.data_dim,
+        c_out=args.data_dim,
+        seq_len=args.hist_window,
+        label_len=args.label_len,
+        out_len=args.pred_window,
+        factor=args.factor,
+        d_model=args.d_model,
+        n_heads=args.n_heads,
+        e_layers=args.e_layers,
+        d_layers=args.d_layers,
+        d_ff=args.d_ff,
+        dropout=args.dropout,
+        attn=args.attn,
+        embed=args.embed,
+        freq=args.freq,
+        activation='gelu',
+        output_attention=False,
+        distil=True,
+        mix=True,
+        device=device,
+    ).to(device)
+
+    optim = optim.Adam(model.parameters(), lr=args.lr)
+
+    if args.L1Loss:
+        criterion = nn.L1Loss().to(device)
+    else:
+        criterion = nn.MSELoss().to(device)
+    evaluateL1 = nn.L1Loss(reduction="none").to(device)
+    evaluateL2 = nn.MSELoss(reduction="none").to(device)
+
+    myModel = myInformer(args, model, optim, criterion, evaluateL1, evaluateL2)
 ##########################################################
 # Train
 ##########################################################

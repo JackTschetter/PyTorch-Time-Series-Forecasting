@@ -1,9 +1,27 @@
-# Ignore environment files
+# Local environment
 .env
-.env.local
-.env.development
-.env.test
-.env.production
+.env.*
+.venv/
+venv/
+env/
 
-# Ignore macOS system files
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# macOS/editor noise
 .DS_Store
+
+# Data, checkpoints, and generated experiment artifacts
+data_*.csv
+checkpoint_*/
+tmpck_*/
+*.pt
+*.pth
+*.pckl
+
+# Paper PDFs should be cited, not redistributed in the portfolio repo
+literature/
+*.pdf

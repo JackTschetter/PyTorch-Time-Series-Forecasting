@@ -14,10 +14,10 @@ class Data_utility(object):
         self.pred_window = pred_window
         self.dat = np.zeros(self.rawdat.shape)
         self.n, self.m = self.dat.shape  # (time, # of sensors)
+        self.scale = torch.ones(self.m).to(device)
+        self._time_feature_cache = {}
         self._normalized(normalize)
         self._split(int(train * self.n), int((train + valid) * self.n))
-
-        self.scale = torch.ones(self.m).to(device)
 
     def load_data(self, file_name):
         file_name = "data_" + file_name + ".csv"
@@ -63,12 +63,12 @@ class Data_utility(object):
         self.valid_idx = range(train, valid)
         self.test_idx = range(valid, self.n)
 
-        train_set = range(self.hist_window + self.pred_window, train)
-        valid_set = range(train, valid)
-        test_set = range(valid, self.n)
-        self.train = self._batchify(train_set)
-        self.valid = self._batchify(valid_set)
-        self.test = self._batchify(test_set)
+        self.train_set = range(self.hist_window + self.pred_window, train)
+        self.valid_set = range(train, valid)
+        self.test_set = range(valid, self.n)
+        self.train = self._batchify(self.train_set)
+        self.valid = self._batchify(self.valid_set)
+        self.test = self._batchify(self.test_set)
 
     def _batchify(self, idx_set):
         n = len(idx_set)
@@ -97,4 +97,76 @@ class Data_utility(object):
             Y = targets[excerpt].to(self.device)
             yield Variable(X), Variable(Y)
             start_idx += batch_size
+
+    def get_informer_sets(self, label_len, freq='h'):
+        if label_len <= 0:
+            raise ValueError("label_len must be positive for Informer.")
+        if label_len > self.hist_window:
+            raise ValueError("label_len must be less than or equal to hist_window for Informer.")
+
+        return {
+            "train": self._batchify_informer(self.train_set, label_len, freq),
+            "valid": self._batchify_informer(self.valid_set, label_len, freq),
+            "test": self._batchify_informer(self.test_set, label_len, freq),
+        }
+
+    def _batchify_informer(self, idx_set, label_len, freq):
+        n = len(idx_set)
+        X_enc = torch.zeros((n, self.hist_window, self.m))
+        X_mark_enc = torch.zeros((n, self.hist_window, self._time_feature_dim(freq)))
+        X_dec = torch.zeros((n, label_len + self.pred_window, self.m))
+        X_mark_dec = torch.zeros((n, label_len + self.pred_window, self._time_feature_dim(freq)))
+        Y = torch.zeros((n, self.pred_window, self.m))
+
+        time_features = self._get_time_features(freq)
+        for i in range(n):
+            pred_end = idx_set[i]
+            pred_start = pred_end - self.pred_window
+            hist_start = pred_start - self.hist_window
+            label_start = pred_start - label_len
+
+            X_enc[i, :, :] = torch.from_numpy(self.dat[hist_start:pred_start, :])
+            X_mark_enc[i, :, :] = torch.from_numpy(time_features[hist_start:pred_start, :])
+            X_dec[i, :label_len, :] = torch.from_numpy(self.dat[label_start:pred_start, :])
+            X_mark_dec[i, :, :] = torch.from_numpy(time_features[label_start:pred_end, :])
+            Y[i, :, :] = torch.from_numpy(self.dat[pred_start:pred_end, :])
+
+        return [X_enc, X_mark_enc, X_dec, X_mark_dec, Y]
+
+    def get_informer_batches(self, informer_set, batch_size, shuffle=True):
+        length = len(informer_set[0])
+        if shuffle:
+            index = torch.randperm(length)
+        else:
+            index = torch.LongTensor(range(length))
+        start_idx = 0
+        while start_idx < length:
+            end_idx = min(length, start_idx + batch_size)
+            excerpt = index[start_idx:end_idx]
+            yield [tensor[excerpt].to(self.device) for tensor in informer_set]
+            start_idx += batch_size
+
+    def _get_time_features(self, freq):
+        freq = freq.lower()
+        if freq not in self._time_feature_cache:
+            dates = pd.DatetimeIndex(pd.to_datetime(self.rawdat_df["ds"]))
+            if freq != 'h':
+                raise ValueError("This Informer integration currently supports hourly frequency only: freq='h'.")
+
+            features = np.stack(
+                [
+                    dates.month,
+                    dates.day,
+                    dates.dayofweek,
+                    dates.hour,
+                ],
+                axis=1,
+            ).astype(np.float32)
+            self._time_feature_cache[freq] = features
+        return self._time_feature_cache[freq]
+
+    def _time_feature_dim(self, freq):
+        if freq.lower() != 'h':
+            raise ValueError("This Informer integration currently supports hourly frequency only: freq='h'.")
+        return 4
 
